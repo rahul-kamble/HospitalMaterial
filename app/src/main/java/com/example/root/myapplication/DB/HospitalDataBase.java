@@ -63,6 +63,7 @@ public class HospitalDataBase {
             + " state text , city text , district text , h_name text ,  address text  , pincode text , contact text , helpline text ," +
             " fax text , category text ,   website text , email text , blood_component text , blood_group text , service_time text ," +
             " latitude text , longitude text);";
+    public static String MAP_FRAGMENT = "mapFragment";
 
     private DatabaseHelper dbHelper;
     private SQLiteDatabase db;

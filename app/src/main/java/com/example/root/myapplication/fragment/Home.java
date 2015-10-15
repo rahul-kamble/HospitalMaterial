@@ -130,7 +130,7 @@ public class Home extends Fragment {
 
                     FragmentManager fragmentManager = getFragmentManager();
                     FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                    fragmentTransaction.replace(R.id.view_main, searchHospitalList).commit();
+                    fragmentTransaction.replace(R.id.view_main, searchHospitalList).addToBackStack(null).commit();
                 }
                 validationForBloodBank(edtState, edtCity);
             }
@@ -166,7 +166,7 @@ public class Home extends Fragment {
                 if (hospitalDataBase.stateWiseHospitalForHospital(state, city).size() > 0) {
                     FragmentManager fragmentManager = getFragmentManager();
                     FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                    fragmentTransaction.replace(R.id.view_main, searchHospitalList).commit();
+                    fragmentTransaction.replace(R.id.view_main, searchHospitalList).addToBackStack(null).commit();
                 }
                 validationForHospital(edtState, edtCity);
             }

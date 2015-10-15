@@ -23,7 +23,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Toast;
 
 import com.example.root.myapplication.DB.HospitalDataBase;
 import com.example.root.myapplication.R;
@@ -191,32 +190,13 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-//        //super.onBackPressed();
-        Home home = new Home();
-        FragmentManager listManager = getFragmentManager();
-        Home myFragment = (Home) getFragmentManager().findFragmentByTag(HOME_FRAGMENT);
-        if (myFragment != null && myFragment.isVisible()) {
-            // add your code here
-            if (doubleBackToExitPressedOnce) {
-                super.onBackPressed();
-                return;
-            }
-            this.doubleBackToExitPressedOnce = true;
-            Toast.makeText(this, "Please Press Back Button Again...", Toast.LENGTH_SHORT).show();
-        } else {
-            if (getFragmentManager().findFragmentByTag(HOME_FRAGMENT) != null) {
-                FragmentTransaction listTransaction = listManager.beginTransaction();
-                listTransaction.remove(getFragmentManager().findFragmentByTag(HOME_FRAGMENT));
-                listTransaction.replace(R.id.view_main, home, HOME_FRAGMENT);
-                listTransaction.commit();
-
-            } else {
-                FragmentTransaction listTransaction = listManager.beginTransaction();
-                listTransaction.replace(R.id.view_main, home, HOME_FRAGMENT);
-//            listTransaction.addToBackStack(null);
-                listTransaction.commit();
-            }
-
+//        getSupportFragmentManager().beginTransaction().
+////                remove(getSupportFragmentManager().findFragmentById().commit();
+        FragmentManager fragmentManager = getFragmentManager();
+        if (fragmentManager.getBackStackEntryCount() > 0)
+            fragmentManager.popBackStack();
+        else {
+            super.onBackPressed();
         }
     }
 
@@ -247,8 +227,10 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.home) {
-
-
+            FragmentManager fragmentManager = getFragmentManager();
+            while (fragmentManager.getBackStackEntryCount() > 0) {
+                fragmentManager.popBackStackImmediate();
+            }
         } else if (id == R.id.findHospital) {
 
             HospitalList hospitalList = new HospitalList();
@@ -261,7 +243,7 @@ public class MainActivity extends AppCompatActivity
             bundle.putString("state", sharedPreferences.getString("state", ""));
             hospitalList.setArguments(bundle);
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.view_main, hospitalList).commit();
+            fragmentTransaction.replace(R.id.view_main, hospitalList).addToBackStack(null).commit();
 
 
         } else if (id == R.id.bloodBank) {
@@ -275,7 +257,7 @@ public class MainActivity extends AppCompatActivity
             bloodBankList.setArguments(bundle1);
             FragmentManager fragmentManager = getFragmentManager();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.view_main, bloodBankList).commit();
+            fragmentTransaction.replace(R.id.view_main, bloodBankList).addToBackStack(null).commit();
         } else if (id == R.id.nav_share) {
             Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
             sharingIntent.setType("text/plain");
@@ -300,7 +282,7 @@ public class MainActivity extends AppCompatActivity
         bloodBankDetails.setArguments(bundle);
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.view_main, bloodBankDetails).commit();
+        fragmentTransaction.replace(R.id.view_main, bloodBankDetails).addToBackStack(null).commit();
     }
 
     public void hospitalDetailsFrag(int position, String state, String city) {
@@ -312,7 +294,7 @@ public class MainActivity extends AppCompatActivity
         hospitalDetailsFrag.setArguments(bundle);
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.view_main, hospitalDetailsFrag).commit();
+        fragmentTransaction.replace(R.id.view_main, hospitalDetailsFrag).addToBackStack(null).commit();
     }
 
     public void gotoUserBloodBankDetails(int position, String state, String city) {
@@ -325,7 +307,7 @@ public class MainActivity extends AppCompatActivity
         bloodBankDetails.setArguments(bundle);
         FragmentManager fragmentManagerForBlood = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManagerForBlood.beginTransaction();
-        fragmentTransaction.replace(R.id.view_main, bloodBankDetails).commit();
+        fragmentTransaction.replace(R.id.view_main, bloodBankDetails).addToBackStack(null).commit();
     }
 
     public void gotoUserHospDetails(int position, String state, String city) {
@@ -337,7 +319,7 @@ public class MainActivity extends AppCompatActivity
         hospitalDetailsFrag.setArguments(bundle);
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.view_main, hospitalDetailsFrag).commit();
+        fragmentTransaction.replace(R.id.view_main, hospitalDetailsFrag).addToBackStack(null).commit();
     }
 
     private void hideKeyboard() {

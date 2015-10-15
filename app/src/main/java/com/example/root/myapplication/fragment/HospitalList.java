@@ -52,7 +52,7 @@ public class HospitalList extends Fragment {
         mapFragment.setArguments(bundle);
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
-        transaction.replace(R.id.view_main, mapFragment).commit();
+        transaction.replace(R.id.view_main, mapFragment, HospitalDataBase.MAP_FRAGMENT).commit();
         return super.onOptionsItemSelected(item);
     }
 
