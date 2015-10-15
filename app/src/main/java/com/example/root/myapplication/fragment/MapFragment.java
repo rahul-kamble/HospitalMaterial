@@ -48,6 +48,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     private com.google.android.gms.maps.MapFragment mMapFragment;
     private List<Address> addd;
     private double double1, double2;
+    HospitalDataBase mdb;
 
     public MapFragment() {
         // Required empty public constructor
@@ -60,7 +61,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-        HospitalDataBase mdb = new HospitalDataBase(getActivity());
+        mdb = new HospitalDataBase(getActivity());
         city = getArguments().getString("city");
         state = getArguments().getString("state");
         if (mdb.stateWiseHospitalForBloodBank(state, city).size()
@@ -106,13 +107,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     }
 
 
-
     @Override
     public void onMapReady(GoogleMap googleMap) {
         // Construct a CameraPosition focusing on United States and move the camera to that position.
 
         Double aDouble = null, aDouble1 = null;
         BloodBank bloodBank = null;
+        Hospital hospital = null;
         LatLng pharmacyLocation = null;
         gcd = new Geocoder(getActivity(), Locale.getDefault());
         try {
@@ -130,27 +131,57 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 .build(); // Creates a CameraPosition from the builder
         googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
         if (mdb.stateWiseHospitalForHospital(state, city).size()
-                > 0 && HospitalDataBase.bbOrhosp == false) {}
-        for (int i = 0; i < this.bloodBanks.size(); i++) {
-            bloodBank = this.bloodBanks.get(i);
-            String address = bloodBank.getAddress();
-            try {
-                addresses = gcd.getFromLocationName(address, 2);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            if (addresses.size() > 0) {
-                Address address1 = addresses.get(0);
-                aDouble = address1.getLatitude();
-                aDouble1 = address1.getLongitude();
-                pharmacyLocation = new LatLng(aDouble, aDouble1);
-                MarkerOptions marker = new MarkerOptions().position(pharmacyLocation)
-                        .title(bloodBank.getHospitalName()).snippet(bloodBank.getAddress());
-                marker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-                googleMap.addMarker(marker);
+                > 0 && HospitalDataBase.bbOrhosp == false) {
+
+            for (int i = 0; i < this.hospitalArrayList.size(); i++) {
+                hospital = this.hospitalArrayList.get(i);
+                String address = hospital.getContact();
+                try {
+                    addresses = gcd.getFromLocationName(address, 2);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                if (addresses.size() > 0) {
+                    Address address1 = addresses.get(0);
+                    aDouble = address1.getLatitude();
+                    aDouble1 = address1.getLongitude();
+                    pharmacyLocation = new LatLng(aDouble, aDouble1);
+                    MarkerOptions marker = new MarkerOptions().position(pharmacyLocation)
+                            .title(hospital.getPvt()).snippet(hospital.getContact());
+                    marker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN));
+                    googleMap.addMarker(marker);
+
+                }
+
 
             }
 
+        }
+        if (mdb.stateWiseHospitalForBloodBank(state, city).size()
+                > 0 && HospitalDataBase.bbOrhosp == true) {
+
+            for (int i = 0; i < this.bloodBanks.size(); i++) {
+                bloodBank = this.bloodBanks.get(i);
+                String address = bloodBank.getAddress();
+                try {
+                    addresses = gcd.getFromLocationName(address, 2);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                if (addresses.size() > 0) {
+                    Address address1 = addresses.get(0);
+                    aDouble = address1.getLatitude();
+                    aDouble1 = address1.getLongitude();
+                    pharmacyLocation = new LatLng(aDouble, aDouble1);
+                    MarkerOptions marker = new MarkerOptions().position(pharmacyLocation)
+                            .title(bloodBank.getHospitalName()).snippet(bloodBank.getAddress());
+                    marker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+                    googleMap.addMarker(marker);
+
+                }
+
+
+            }
 
         }
 

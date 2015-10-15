@@ -1,6 +1,8 @@
 package com.example.root.myapplication.fragment;
 
 import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -12,9 +14,9 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.example.root.myapplication.DB.HospitalDataBase;
-import com.example.root.myapplication.activity.MainActivity;
 import com.example.root.myapplication.ModelClass.BloodBank;
 import com.example.root.myapplication.R;
+import com.example.root.myapplication.activity.MainActivity;
 import com.example.root.myapplication.adapter.BloodBankAdap;
 
 import java.util.ArrayList;
@@ -40,11 +42,12 @@ public class BloodBankList extends Fragment {
         mainactivity = (MainActivity) getActivity();
         addListListener();
         dbHelper = new HospitalDataBase(getActivity());
-            city = getArguments().getString("city");
-            state = getArguments().getString("state");
+        city = getArguments().getString("city");
+        state = getArguments().getString("state");
         addDataTolist();
         return rootView;
     }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -56,7 +59,21 @@ public class BloodBankList extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         MenuItem menuItem = menu.getItem(0);
-        menuItem.setVisible(false);
+        menuItem.setVisible(true);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        MapFragment mapFragment = new MapFragment();
+        HospitalDataBase.bbOrhosp = true;
+        Bundle bundle = new Bundle();
+        bundle.putString("city", city);
+        bundle.putString("state", state);
+        mapFragment.setArguments(bundle);
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        transaction.replace(R.id.view_main, mapFragment).commit();
+        return super.onOptionsItemSelected(item);
     }
 
     private void addDataTolist() {

@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -36,7 +37,8 @@ public class Home extends Fragment {
     private ArrayAdapter<String> adapterForCity;
     private Button findBloodBank;
     String city, state;
-    HospitalDataBase hospitalDataBase;HospitalDataBase dbHelper;
+    HospitalDataBase hospitalDataBase;
+    HospitalDataBase dbHelper;
     ArrayList<String> stateList = new ArrayList<String>();
 
     public Home() {
@@ -76,7 +78,7 @@ public class Home extends Fragment {
         edtState.setTextColor(Color.BLACK);
         Log.e("pause", "view");
 
-        edtState.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        edtState.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 ArrayList<String> cityList = new ArrayList<String>();
@@ -92,6 +94,14 @@ public class Home extends Fragment {
                 edtCity.setTextColor(Color.BLACK);
             }
         });
+
+        edtCity.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                hideKeyboard();
+            }
+        });
+
         findBloodBank = (Button) rootView.findViewById(R.id.bloodBank);
         findBloodBank.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -189,7 +199,6 @@ public class Home extends Fragment {
     }
 
 
-
     private void hideKeyboard() {
         View view = getActivity().getCurrentFocus();
         if (view != null) {
@@ -198,12 +207,12 @@ public class Home extends Fragment {
         }
     }
 
-   public void updateStateList() {
+    public void updateStateList() {
 
-       dbHelper = new HospitalDataBase(getActivity());
-       stateList.clear();
-       stateList.addAll(dbHelper.stateFromDB());
-       adapterForState.notifyDataSetChanged();
+        dbHelper = new HospitalDataBase(getActivity());
+        stateList.clear();
+        stateList.addAll(dbHelper.stateFromDB());
+        adapterForState.notifyDataSetChanged();
 
     }
 

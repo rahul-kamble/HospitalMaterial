@@ -71,6 +71,7 @@ public class HospitalDataBase {
 
     private Context context;
     public static boolean bbOrhosp;
+    public static boolean bloodOrHosp = false;
     public static boolean checkBundle=false;
 
     public void insertIntoDbHospital(ArrayList<Hospital> hospitalData) {
