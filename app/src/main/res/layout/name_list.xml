@@ -12,14 +12,30 @@
         android:layout_marginBottom="5dp"
         android:layout_marginLeft="5dip" />
 
-    <TextView
-        android:id="@+id/itemOnList"
+    <RelativeLayout
         android:layout_width="wrap_content"
-        android:layout_height="30dp"
+        android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_marginLeft="10dip"
-        android:layout_toRightOf="@+id/playlist_image"
-        android:gravity="center_vertical"
-        android:singleLine="true"
-        android:textSize="16sp" />
+        android:layout_marginRight="10dip"
+        android:layout_marginBottom="10dp"
+        android:paddingLeft="45dp">
+
+        <TextView
+            android:id="@+id/itemOnList"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/itemSpecialization"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/itemOnList"
+            android:singleLine="true"
+            android:textSize="12sp" />
+    </RelativeLayout>
+
+
 </RelativeLayout>

@@ -6,6 +6,7 @@ import android.app.FragmentTransaction;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -35,7 +36,8 @@ public class Home extends Fragment {
     private ArrayAdapter<String> adapterForCity;
     private Button findBloodBank;
     String city, state;
-    HospitalDataBase hospitalDataBase;
+    HospitalDataBase hospitalDataBase;HospitalDataBase dbHelper;
+    ArrayList<String> stateList = new ArrayList<String>();
 
     public Home() {
         // Required empty public constructor
@@ -52,10 +54,12 @@ public class Home extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        HospitalDataBase hospitalDataBase = new HospitalDataBase(getActivity());
-        ArrayList<String> stateList = hospitalDataBase.stateFromDB();
+        dbHelper = new HospitalDataBase(getActivity());
+        stateList.addAll(dbHelper.stateFromDB());
+        Log.e("arraylist", "" + stateList.size());
         adapterForState = new ArrayAdapter<String>
                 (getActivity(), android.R.layout.select_dialog_item, stateList);
+
     }
 
 
@@ -67,9 +71,10 @@ public class Home extends Fragment {
 
         edtCity = (AutoCompleteTextView) rootView.findViewById(R.id.city);
         edtState = (AutoCompleteTextView) rootView.findViewById(R.id.state);
-        edtState.setThreshold(2);//will start working from first character
+        edtState.setThreshold(0);//will start working from first character
         edtState.setAdapter(adapterForState);//setting the adapterForState data into the AutoCompleteTextView
         edtState.setTextColor(Color.BLACK);
+        Log.e("pause", "view");
 
         edtState.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -117,7 +122,7 @@ public class Home extends Fragment {
                     FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                     fragmentTransaction.replace(R.id.view_main, searchHospitalList).commit();
                 }
-                validate(edtState, edtCity);
+                validationForBloodBank(edtState, edtCity);
             }
         });
 
@@ -153,24 +158,37 @@ public class Home extends Fragment {
                     FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                     fragmentTransaction.replace(R.id.view_main, searchHospitalList).commit();
                 }
-                validate(edtState, edtCity);
+                validationForHospital(edtState, edtCity);
             }
         });
         return rootView;
     }
 
-    private void validate(AutoCompleteTextView edtState, AutoCompleteTextView edtCity) {
+    private void validationForHospital(AutoCompleteTextView edtState, AutoCompleteTextView edtCity) {
         if (edtState.getText().toString().length() == 0 || edtCity.getText().toString().length() == 0) {
             if (edtState.getText().toString().length() == 0)
                 edtState.setError("State is required!");
             if (edtCity.getText().toString().length() == 0)
                 edtCity.setError("City is required!");
         } else if (hospitalDataBase.stateWiseHospitalForHospital(state, city).size() == 0) {
-            {
-                Toast.makeText(getActivity(), "Sorry No Hospital Found", Toast.LENGTH_SHORT).show();
-            }
+
+            Toast.makeText(getActivity(), "Sorry No Hospital Found", Toast.LENGTH_SHORT).show();
         }
     }
+
+    private void validationForBloodBank(AutoCompleteTextView edtState, AutoCompleteTextView edtCity) {
+        if (edtState.getText().toString().length() == 0 || edtCity.getText().toString().length() == 0) {
+            if (edtState.getText().toString().length() == 0)
+                edtState.setError("State is required!");
+            if (edtCity.getText().toString().length() == 0)
+                edtCity.setError("City is required!");
+        } else if (hospitalDataBase.stateWiseHospitalForBloodBank(state, city).size() == 0) {
+
+            Toast.makeText(getActivity(), "Sorry No Hospital Found", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
 
     private void hideKeyboard() {
         View view = getActivity().getCurrentFocus();
@@ -179,4 +197,14 @@ public class Home extends Fragment {
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
     }
+
+   public void updateStateList() {
+
+       dbHelper = new HospitalDataBase(getActivity());
+       stateList.clear();
+       stateList.addAll(dbHelper.stateFromDB());
+       adapterForState.notifyDataSetChanged();
+
+    }
+
 }

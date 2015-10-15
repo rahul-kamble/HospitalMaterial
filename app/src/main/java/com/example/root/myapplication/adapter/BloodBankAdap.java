@@ -41,10 +41,14 @@ public class BloodBankAdap extends ArrayAdapter<BloodBank> {
 
         BloodBank modelclass = arrayList.get(position);
 
-        TextView textView = (TextView) row.findViewById(R.id.itemOnList);
-        textView.setSingleLine(true);
-        textView.setText(modelclass.getHospitalName());
-        textView.setTextColor(Color.BLACK);
+        TextView hospitalName = (TextView) row.findViewById(R.id.itemOnList);
+        TextView specialization = (TextView) row.findViewById(R.id.itemSpecialization);
+        hospitalName.setSingleLine(true);
+        hospitalName.setText(modelclass.getHospitalName());
+        hospitalName.setTextColor(Color.BLACK);
+        specialization.setSingleLine(true);
+        specialization.setText(modelclass.getAddress());
+        specialization.setTextColor(Color.GRAY);
         ImageView imageView = (ImageView) row.findViewById(R.id.playlist_image);
         imageView.setImageResource(R.drawable.blood);
 

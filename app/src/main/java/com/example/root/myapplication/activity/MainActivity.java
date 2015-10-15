@@ -50,11 +50,13 @@ public class MainActivity extends AppCompatActivity
     private boolean checkStatus, flagForLocation, flag;
     LocationManager mLocationManager;
     private boolean doubleBackToExitPressedOnce = false;
+    Home homeFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        homeFragment = (Home) getFragmentManager().findFragmentById(R.id.homeFragment);
         hospitalDataBase = new HospitalDataBase(MainActivity.this);
 
         SharedPreferences pref = getApplicationContext().getSharedPreferences("Hospital", MODE_PRIVATE);
@@ -77,7 +79,9 @@ public class MainActivity extends AppCompatActivity
 
                 do {
                     if (checkStatus == true && status == false) {
+
                         dialog.dismiss();
+                        homeFragment.updateStateList();
                         SharedPreferences pref1 = getApplicationContext().getSharedPreferences("Login", MODE_PRIVATE);
                         SharedPreferences.Editor editor1 = pref1.edit();
                         editor1.putBoolean("Status", true);
@@ -97,27 +101,33 @@ public class MainActivity extends AppCompatActivity
         //location search
         mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
-        mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0,
-                0, mLocationListener);
+        mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, mLocationListener);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.myToolbar);
         setSupportActionBar(toolbar);
 
-
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+                hideKeyboard();
+            }
+
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                super.onDrawerClosed(drawerView);
+                hideKeyboard();
+            }
+        };
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
+
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
-        Home home = new Home();
-        hideKeyboard();
-        FragmentManager fragmentManager = getFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.view_main, home, HOME_FRAGMENT).addToBackStack(null).commit();
 
     }
 
@@ -178,6 +188,7 @@ public class MainActivity extends AppCompatActivity
         }
     };
 
+
     @Override
     public void onBackPressed() {
 //        //super.onBackPressed();
@@ -226,20 +237,9 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-//        //noinspection SimplifiableIfStatement
-//        if (id == R.id.action_settings) {
-//            return true;
-//        }
-
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
 
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -248,16 +248,12 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.home) {
 
-            Home home = new Home();
-            hideKeyboard();
-            FragmentManager fragmentManager = getFragmentManager();
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.view_main, home, HOME_FRAGMENT).addToBackStack(null).commit();
 
         } else if (id == R.id.findHospital) {
 
             HospitalList hospitalList = new HospitalList();
             hideKeyboard();
+            setTitle("Hospital List");
             FragmentManager fragmentManager = getFragmentManager();
             SharedPreferences sharedPreferences = getSharedPreferences("location", MODE_PRIVATE);
             Bundle bundle = new Bundle();
@@ -271,6 +267,7 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.bloodBank) {
             BloodBankList bloodBankList = new BloodBankList();
             hideKeyboard();
+            setTitle("Blood Bank List");
             SharedPreferences sharedPreferences = getSharedPreferences("location", MODE_PRIVATE);
             Bundle bundle1 = new Bundle();
             bundle1.putString("city", sharedPreferences.getString("city", ""));
@@ -279,11 +276,18 @@ public class MainActivity extends AppCompatActivity
             FragmentManager fragmentManager = getFragmentManager();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.replace(R.id.view_main, bloodBankList).commit();
-
+        } else if (id == R.id.nav_share) {
+            Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+            sharingIntent.setType("text/plain");
+            String shareBody = "https://www.google.co.in/?gfe_rd=cr&ei=JukcVofYEKfG8Ae_162gBA&gws_rd=ssl";
+            sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Subject Here");
+            sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
+            startActivity(Intent.createChooser(sharingIntent, "Share via"));
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
+        hideKeyboard();
         return true;
     }
 

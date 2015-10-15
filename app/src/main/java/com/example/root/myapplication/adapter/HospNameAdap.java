@@ -38,11 +38,14 @@ public class HospNameAdap extends ArrayAdapter<Hospital> {
             row = convertView;
 
         Hospital modelclass = arrayList.get(position);
-
         TextView textView = (TextView) row.findViewById(R.id.itemOnList);
+        TextView specialization = (TextView) row.findViewById(R.id.itemSpecialization);
         textView.setSingleLine(true);
         textView.setText(modelclass.getPvt());
         textView.setTextColor(Color.BLACK);
+        specialization.setSingleLine(true);
+        specialization.setText(modelclass.getSpecializations());
+        specialization.setTextColor(Color.GRAY);
         ImageView imageView = (ImageView) row.findViewById(R.id.playlist_image);
         imageView.setImageResource(R.drawable.rsz_hossp);
 

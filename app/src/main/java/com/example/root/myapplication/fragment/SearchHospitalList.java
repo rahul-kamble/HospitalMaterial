@@ -1,6 +1,8 @@
 package com.example.root.myapplication.fragment;
 
 import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -12,10 +14,10 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.example.root.myapplication.DB.HospitalDataBase;
-import com.example.root.myapplication.activity.MainActivity;
 import com.example.root.myapplication.ModelClass.BloodBank;
 import com.example.root.myapplication.ModelClass.Hospital;
 import com.example.root.myapplication.R;
+import com.example.root.myapplication.activity.MainActivity;
 import com.example.root.myapplication.adapter.BloodBankAdap;
 import com.example.root.myapplication.adapter.HospNameAdap;
 
@@ -50,23 +52,17 @@ public class SearchHospitalList extends Fragment {
         dbHelper = new HospitalDataBase(getActivity());
         addListListener();
         hospitalDataBase = new HospitalDataBase(getActivity());
-        if (hospitalDataBase.stateWiseHospitalForBloodBank(userState, userCity).size() > 0 && HospitalDataBase.bbOrhosp==true) {
+        if (hospitalDataBase.stateWiseHospitalForBloodBank(userState, userCity).size() > 0 && HospitalDataBase.bbOrhosp == true) {
             addDataTolistForBloodBank();
         }
 
-        if (hospitalDataBase.stateWiseHospitalForHospital(userState, userCity).size() > 0 && HospitalDataBase.bbOrhosp==false) {
+        if (hospitalDataBase.stateWiseHospitalForHospital(userState, userCity).size() > 0 && HospitalDataBase.bbOrhosp == false) {
             addDataTolist();
         }
 
         return rootView;
     }
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        MenuItem menuItem = menu.getItem(0);
-        menuItem.setVisible(false);
-    }
 
     private void addDataTolistForBloodBank() {
         bloodBankList.clear();
@@ -82,6 +78,13 @@ public class SearchHospitalList extends Fragment {
         setHasOptionsMenu(true);
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        MenuItem menuItem = menu.findItem(R.id.map);
+        menuItem.setVisible(true);
+    }
+
     private void addDataTolist() {
         hospNameList.clear();
         hospNameList.addAll(dbHelper.stateWiseHospitalForHospital(userState, userCity));
@@ -90,14 +93,27 @@ public class SearchHospitalList extends Fragment {
         listView.setAdapter(hospNameAdap);
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        MapFragment mapFragment = new MapFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString("city", userCity);
+        bundle.putString("state", userState);
+        mapFragment.setArguments(bundle);
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        transaction.replace(R.id.view_main, mapFragment).commit();
+        return super.onOptionsItemSelected(item);
+    }
+
     private void addListListener() {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                if (hospitalDataBase.stateWiseHospitalForBloodBank(userState, userCity).size() > 0 && HospitalDataBase.bbOrhosp==true) {
+                if (hospitalDataBase.stateWiseHospitalForBloodBank(userState, userCity).size() > 0 && HospitalDataBase.bbOrhosp == true) {
                     mainactivity.gotoUserBloodBankDetails(i, bloodBankList.get(i).getState(), bloodBankList.get(i).getCity());
                 }
-                if (hospitalDataBase.stateWiseHospitalForHospital(userState, userCity).size() > 0 && HospitalDataBase.bbOrhosp==false) {
+                if (hospitalDataBase.stateWiseHospitalForHospital(userState, userCity).size() > 0 && HospitalDataBase.bbOrhosp == false) {
                     mainactivity.gotoUserHospDetails(i, hospNameList.get(i).getState(), hospNameList.get(i).getCity());
                 }
 

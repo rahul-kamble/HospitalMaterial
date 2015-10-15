@@ -3,7 +3,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:animateLayoutChanges="true"
     android:background="@color/bright_foreground_inverse_material_light"
     android:orientation="vertical"
     android:paddingBottom="20dp"
@@ -12,52 +11,42 @@
     android:paddingTop="60dp">
 
 
-    <android.support.design.widget.TextInputLayout
-        android:id="@+id/til"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content">
+    <AutoCompleteTextView
+        android:id="@+id/state"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:hint="State"
+        android:clickable="false"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:textColor="@color/abc_input_method_navigation_guard"
+        android:textColorHint="#000000"
+        android:textSize="25dp">.
 
-        <AutoCompleteTextView
-            android:id="@+id/state"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:hint="State"
-            android:maxLines="1"
-            android:singleLine="true"
-            android:textColor="@color/abc_input_method_navigation_guard"
-            android:textColorHint="#000000"
-            android:textSize="25dp">.
+    </AutoCompleteTextView>
 
-        </AutoCompleteTextView>
 
-    </android.support.design.widget.TextInputLayout>
+    <AutoCompleteTextView
+        android:id="@+id/city"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:hint="City"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:textColor="@color/abc_input_method_navigation_guard"
+        android:textColorHint="#000000"
+        android:textSize="25dp">
 
-    <android.support.design.widget.TextInputLayout
-        android:id="@+id/til1"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content">
-
-        <AutoCompleteTextView
-            android:id="@+id/city"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:hint="City"
-            android:maxLines="1"
-            android:singleLine="true"
-            android:textColor="@color/abc_input_method_navigation_guard"
-            android:textColorHint="#000000"
-            android:textSize="25dp">
-
-        </AutoCompleteTextView>
-    </android.support.design.widget.TextInputLayout>
+    </AutoCompleteTextView>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:background="@color/bright_foreground_inverse_material_light"
         android:orientation="horizontal">
+
 
         <Button
             android:id="@+id/findHospital"
@@ -66,10 +55,11 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:layout_weight="2"
-            android:background="@xml/shape"
+            android:background="@drawable/button"
             android:text="Find Hospital"
             android:textColor="#ffffffff"
             android:textStyle="bold" />
+
 
         <Button
             android:id="@+id/bloodBank"
@@ -79,7 +69,7 @@
             android:layout_marginLeft="20dp"
             android:layout_marginTop="16dp"
             android:layout_weight="2"
-            android:background="@xml/shape"
+            android:background="@drawable/button"
             android:text="Find Blood Bank"
             android:textColor="#ffffffff"
             android:textStyle="bold" />

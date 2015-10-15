@@ -9,8 +9,8 @@
         android:background="@color/background_floating_material_light"
         android:layout_height="match_parent"
         android:layout_marginBottom="10dp"
+        android:paddingTop="60dp"
         android:paddingRight="20dp"
-        android:layout_marginTop="10dp"
         android:orientation="vertical">
 
         <LinearLayout

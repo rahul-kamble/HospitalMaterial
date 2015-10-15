@@ -443,6 +443,7 @@ public class HospitalDataBase {
             cursor.close();
             close();
         }
+        Log.e("arraylistInDb::",""+stateList.size());
         return stateList;
     }
 
