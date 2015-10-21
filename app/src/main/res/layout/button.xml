@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.andexert.library.RippleView
+    android:id="@+id/more"
+    android:layout_width="?android:actionBarSize"
+    android:layout_height="?android:actionBarSize"
+    android:layout_toLeftOf="@+id/more2"
+    android:layout_margin="5dp"
+    rv_centered="true">
+
+    <ImageView
+        android:layout_width="?android:actionBarSize"
+        android:layout_height="?android:actionBarSize"
+        android:src="@android:drawable/ic_menu_edit"
+        android:layout_centerInParent="true"
+        android:padding="10dp"
+        android:background="@android:color/holo_blue_dark"/>
+
+</com.andexert.library.RippleView>
