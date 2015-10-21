@@ -173,7 +173,14 @@ public class Home extends Fragment {
         });
         return rootView;
     }
-
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (edtState.getText().toString().length() == 0)
+            edtState.setError(null);
+        if (edtCity.getText().toString().length() == 0)
+            edtCity.setError(null);
+    }
     private void validationForHospital(AutoCompleteTextView edtState, AutoCompleteTextView edtCity) {
         if (edtState.getText().toString().length() == 0 || edtCity.getText().toString().length() == 0) {
             if (edtState.getText().toString().length() == 0)

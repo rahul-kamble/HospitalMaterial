@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.example.root.myapplication.DB.HospitalDataBase;
 import com.example.root.myapplication.ModelClass.BloodBank;
@@ -95,15 +96,32 @@ public class SearchHospitalList extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        MapFragment mapFragment = new MapFragment();
-        Bundle bundle = new Bundle();
-        bundle.putString("city", userCity);
-        bundle.putString("state", userState);
-        mapFragment.setArguments(bundle);
-        FragmentManager fragmentManager = getFragmentManager();
-        FragmentTransaction transaction = fragmentManager.beginTransaction();
-        transaction.replace(R.id.view_main, mapFragment, HospitalDataBase.MAP_FRAGMENT).commit();
+        HospitalDataBase hospitalDataBase = new HospitalDataBase(getActivity());
+        if (hospitalDataBase.gps_enabled == false) {
+            hospitalDataBase.locationCheck();
+        }
+        if (hospitalDataBase.checkConnection()==true && hospitalDataBase.gps_enabled == true) {
+            MapFragment mapFragment = new MapFragment();
+            Bundle bundle = new Bundle();
+            bundle.putString("city", userCity);
+            bundle.putString("state", userState);
+            mapFragment.setArguments(bundle);
+            FragmentManager fragmentManager = getFragmentManager();
+            FragmentTransaction transaction = fragmentManager.beginTransaction();
+            transaction.add(R.id.view_main, mapFragment).addToBackStack(null).commit();
+            getActivity().setTitle("Map");
+        }
+        else
+        {
+            Toast.makeText(getActivity(), "Check Internet connetion or GPS", Toast.LENGTH_SHORT).show();
+        }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getActivity().setTitle("Search Hospital");
     }
 
     private void addListListener() {
@@ -114,7 +132,7 @@ public class SearchHospitalList extends Fragment {
                     mainactivity.gotoUserBloodBankDetails(i, bloodBankList.get(i).getState(), bloodBankList.get(i).getCity());
                 }
                 if (hospitalDataBase.stateWiseHospitalForHospital(userState, userCity).size() > 0 && HospitalDataBase.bbOrhosp == false) {
-                    mainactivity.gotoUserHospDetails(i, hospNameList.get(i).getState(), hospNameList.get(i).getCity());
+                    mainactivity.gotoUserHospDetails(i, hospNameList.get(i).getState(), hospNameList.get(i).getDistrict());
                 }
 
             }

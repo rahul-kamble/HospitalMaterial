@@ -3,12 +3,11 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bright_foreground_inverse_material_light"
     android:orientation="vertical"
     android:paddingBottom="20dp"
+    android:paddingTop="20dp"
     android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="70dp">
+    android:paddingRight="@dimen/activity_horizontal_margin">
 
 
     <AutoCompleteTextView
@@ -16,13 +15,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
-        android:hint="State"
         android:clickable="false"
+        android:hint="State"
         android:maxLines="1"
         android:singleLine="true"
         android:textColor="@color/abc_input_method_navigation_guard"
-        android:textColorHint="#000000"
-        android:textSize="25dp">.
+        android:textColorHint="@color/wallet_bright_foreground_disabled_holo_light"
+        android:textSize="20dp">.
 
     </AutoCompleteTextView>
 
@@ -36,44 +35,54 @@
         android:maxLines="1"
         android:singleLine="true"
         android:textColor="@color/abc_input_method_navigation_guard"
-        android:textColorHint="#000000"
-        android:textSize="25dp">
+        android:textColorHint="@color/wallet_bright_foreground_disabled_holo_light"
+        android:textSize="20dp">
 
     </AutoCompleteTextView>
 
-    <LinearLayout
+
+    <com.andexert.library.RippleView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/more"
+        rv_centered="true"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/bright_foreground_inverse_material_light"
-        android:orientation="horizontal">
+        android:layout_height="match_parent"
+        android:layout_margin="5dp">
 
-
-        <Button
-            android:id="@+id/findHospital"
-            style="?android:textAppearanceSmall"
-            android:layout_width="0dp"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:layout_weight="2"
-            android:background="@drawable/button"
-            android:text="Find Hospital"
-            android:textColor="#ffffffff"
-            android:textStyle="bold" />
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/findHospital"
+                style="?android:textAppearanceSmall"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_marginTop="16dp"
+                android:layout_weight="2"
+                android:text="Find Hospital"
+                android:background="@color/colorPrimary"
+                android:textColor="#ffffff"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/bloodBank"
+                style="?android:textAppearanceSmall"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:background="@color/colorPrimary"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="16dp"
+                android:layout_weight="2"
+                android:text="Find Blood Bank"
+                android:textColor="#ffffff"
+                android:textStyle="bold" />
 
 
-        <Button
-            android:id="@+id/bloodBank"
-            style="?android:textAppearanceSmall"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_marginTop="16dp"
-            android:layout_weight="2"
-            android:background="@drawable/button"
-            android:text="Find Blood Bank"
-            android:textColor="#ffffffff"
-            android:textStyle="bold" />
-    </LinearLayout>
+        </LinearLayout>
+    </com.andexert.library.RippleView>
 
 
 </LinearLayout>

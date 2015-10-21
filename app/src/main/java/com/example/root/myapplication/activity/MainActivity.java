@@ -23,10 +23,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Toast;
 
 import com.example.root.myapplication.DB.HospitalDataBase;
 import com.example.root.myapplication.R;
 import com.example.root.myapplication.Service.DownloadService;
+import com.example.root.myapplication.Service.LatLongService;
 import com.example.root.myapplication.fragment.BloodBankDetails;
 import com.example.root.myapplication.fragment.BloodBankList;
 import com.example.root.myapplication.fragment.GotoUserHospDetails;
@@ -42,103 +44,23 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final String HOME_FRAGMENT = "home_fragment";
+    LocationManager mLocationManager;
+    Home homeFragment;
+    DrawerLayout drawer;
     private HospitalDataBase hospitalDataBase;
     private ProgressDialog dialog;
     private boolean status;
     private String cityForbundle, stateForBundle;
     private boolean checkStatus, flagForLocation, flag;
-    LocationManager mLocationManager;
     private boolean doubleBackToExitPressedOnce = false;
-    Home homeFragment;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        homeFragment = (Home) getFragmentManager().findFragmentById(R.id.homeFragment);
-        hospitalDataBase = new HospitalDataBase(MainActivity.this);
-
-        SharedPreferences pref = getApplicationContext().getSharedPreferences("Hospital", MODE_PRIVATE);
-        status = pref.getBoolean("Status", false);
-
-        if (hospitalDataBase.readHospitalDataFromDatabase().size() == 0) {
-            Intent intent = new Intent(MainActivity.this, DownloadService.class);
-            startService(intent);
-            dialog = new ProgressDialog(MainActivity.this);
-            dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-            dialog.setMessage("Loading. Please wait...");
-            dialog.setIndeterminate(true);
-            dialog.setCanceledOnTouchOutside(false);
-            dialog.show();
-        }
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-
-                do {
-                    if (checkStatus == true && status == false) {
-
-                        dialog.dismiss();
-                        homeFragment.updateStateList();
-                        SharedPreferences pref1 = getApplicationContext().getSharedPreferences("Login", MODE_PRIVATE);
-                        SharedPreferences.Editor editor1 = pref1.edit();
-                        editor1.putBoolean("Status", true);
-                        editor1.commit();
-
-                    }
-                    Log.e("size", "" + hospitalDataBase.readBloddBankDataFromDB().size());
-                    if (hospitalDataBase.readBloddBankDataFromDB().size() >= 2900) {
-                        checkStatus = true;
-                    }
-                } while (hospitalDataBase.readBloddBankDataFromDB().size() < 2946);
-            }
-
-        }).start();
-        flagForLocation = false;
-
-        //location search
-        mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-
-        mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, mLocationListener);
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.myToolbar);
-        setSupportActionBar(toolbar);
-
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
-            @Override
-            public void onDrawerOpened(View drawerView) {
-                super.onDrawerOpened(drawerView);
-                hideKeyboard();
-            }
-
-            @Override
-            public void onDrawerClosed(View drawerView) {
-                super.onDrawerClosed(drawerView);
-                hideKeyboard();
-            }
-        };
-        drawer.setDrawerListener(toggle);
-        toggle.syncState();
-
-
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
-
-    }
-
     private List<Address> addresses;
     private final LocationListener mLocationListener = new LocationListener() {
         @Override
         public void onLocationChanged(final Location location) {
             SharedPreferences pref1 = getApplicationContext().getSharedPreferences("location", MODE_PRIVATE);
-
             boolean locationStatus = pref1.getBoolean("Location", false);
 
-            if (location != null && locationStatus == false) {
+            if (location != null) {
                 SharedPreferences.Editor editor1 = pref1.edit();
                 editor1.putBoolean("Location", true);
 
@@ -186,6 +108,103 @@ public class MainActivity extends AppCompatActivity
 
         }
     };
+    private boolean connectionCheck;
+    private int fragmentId;
+    private boolean gps_enabled;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        homeFragment = (Home) getFragmentManager().findFragmentById(R.id.homeFragment);
+        hospitalDataBase = new HospitalDataBase(MainActivity.this);
+        connectionCheck = hospitalDataBase.checkConnection();
+        if (connectionCheck == true) {
+            if (hospitalDataBase.gps_enabled == false) {
+                hospitalDataBase.locationCheck();
+            }
+
+            SharedPreferences pref = getApplicationContext().getSharedPreferences("Hospital", MODE_PRIVATE);
+            status = pref.getBoolean("Status", false);
+
+            if (hospitalDataBase.readHospitalDataFromDatabase().size() == 0) {
+                Intent intent = new Intent(MainActivity.this, DownloadService.class);
+                startService(intent);
+                dialog = new ProgressDialog(MainActivity.this);
+                dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                dialog.setMessage("Loading. Please wait...");
+                dialog.setIndeterminate(true);
+                dialog.setCanceledOnTouchOutside(false);
+                dialog.show();
+            }
+
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+
+                    do {
+                        if (checkStatus == true && status == false) {
+                            dialog.dismiss();
+                            Intent intent = new Intent(MainActivity.this, LatLongService.class);
+                            startService(intent);
+                            homeFragment.updateStateList();
+
+                            SharedPreferences pref1 = getApplicationContext().getSharedPreferences("Login", MODE_PRIVATE);
+                            SharedPreferences.Editor editor1 = pref1.edit();
+                            editor1.putBoolean("Status", true);
+                            editor1.commit();
+
+                        }
+                        Log.e("size", "" + hospitalDataBase.readHospitalDataFromDatabase().size());
+                        if (hospitalDataBase.readHospitalDataFromDatabase().size() >= 995) {
+                            checkStatus = true;
+                        }
+                    } while (hospitalDataBase.readHospitalDataFromDatabase().size() < 1040);
+                }
+
+            }).start();
+            flagForLocation = false;
+        } else {
+            Toast.makeText(MainActivity.this, "No Internet Connection", Toast.LENGTH_SHORT).show();
+        }
+        //location search
+        mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        gps_enabled = mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+        if (gps_enabled == true) {
+            mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, mLocationListener);
+        } else {
+            Toast.makeText(MainActivity.this, "Need a Sim Card ", Toast.LENGTH_LONG).show();
+        }
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.myToolbar);
+        setSupportActionBar(toolbar);
+
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+                hideKeyboard();
+            }
+
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                super.onDrawerClosed(drawerView);
+                hideKeyboard();
+
+
+            }
+        };
+        drawer.setDrawerListener(toggle);
+        toggle.syncState();
+
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+
+    }
 
 
     @Override
@@ -193,11 +212,14 @@ public class MainActivity extends AppCompatActivity
 //        getSupportFragmentManager().beginTransaction().
 ////                remove(getSupportFragmentManager().findFragmentById().commit();
         FragmentManager fragmentManager = getFragmentManager();
-        if (fragmentManager.getBackStackEntryCount() > 0)
+        if (this.drawer.isDrawerOpen(GravityCompat.START)) {
+            this.drawer.closeDrawer(GravityCompat.START);
+        } else if (fragmentManager.getBackStackEntryCount() > 0)
             fragmentManager.popBackStack();
         else {
             super.onBackPressed();
         }
+
     }
 
     protected void onResume() {
@@ -211,7 +233,7 @@ public class MainActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
-        menu.getItem(0).setVisible(false);
+        menu.getItem(0).setVisible(true);
         return true;
     }
 
@@ -225,17 +247,19 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-
         if (id == R.id.home) {
+            setTitle("Search Hospital");
             FragmentManager fragmentManager = getFragmentManager();
             while (fragmentManager.getBackStackEntryCount() > 0) {
                 fragmentManager.popBackStackImmediate();
             }
         } else if (id == R.id.findHospital) {
-
+            if (hospitalDataBase.gps_enabled == false) {
+                hospitalDataBase.locationCheck();
+            }
             HospitalList hospitalList = new HospitalList();
             hideKeyboard();
-            setTitle("Hospital List");
+            setTitle("Hospitals");
             FragmentManager fragmentManager = getFragmentManager();
             SharedPreferences sharedPreferences = getSharedPreferences("location", MODE_PRIVATE);
             Bundle bundle = new Bundle();
@@ -243,13 +267,20 @@ public class MainActivity extends AppCompatActivity
             bundle.putString("state", sharedPreferences.getString("state", ""));
             hospitalList.setArguments(bundle);
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+//            fragmentTransaction.remove()
             fragmentTransaction.replace(R.id.view_main, hospitalList).addToBackStack(null).commit();
+//            while (fragmentManager.getBackStackEntryCount() > 1) {
+//                fragmentManager.popBackStackImmediate();
+//            }
 
 
         } else if (id == R.id.bloodBank) {
+            if (hospitalDataBase.gps_enabled == false) {
+                hospitalDataBase.locationCheck();
+            }
             BloodBankList bloodBankList = new BloodBankList();
             hideKeyboard();
-            setTitle("Blood Bank List");
+            setTitle("Blood Bank");
             SharedPreferences sharedPreferences = getSharedPreferences("location", MODE_PRIVATE);
             Bundle bundle1 = new Bundle();
             bundle1.putString("city", sharedPreferences.getString("city", ""));
@@ -258,6 +289,9 @@ public class MainActivity extends AppCompatActivity
             FragmentManager fragmentManager = getFragmentManager();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.replace(R.id.view_main, bloodBankList).addToBackStack(null).commit();
+            while (fragmentManager.getBackStackEntryCount() > 1) {
+                fragmentManager.popBackStackImmediate();
+            }
         } else if (id == R.id.nav_share) {
             Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
             sharingIntent.setType("text/plain");

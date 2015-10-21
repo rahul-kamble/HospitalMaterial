@@ -51,18 +51,18 @@ public class DownloadService extends Service {
 //                Looper.prepare();
 //                if (isNetworkAvailable(getApplicationContext())) {
 //                    for (int i = 0; i <=8; i++) {
-                if(hospitalDataBase.readBloddBankDataFromDB().size()==0 && hospitalDataBase.readHospitalDataFromDatabase().size()==0) {
+                if (hospitalDataBase.readBloddBankDataFromDB().size() == 0 && hospitalDataBase.readHospitalDataFromDatabase().size() == 0) {
                     bloodBankJson = jsonParser.openHttpConnectionForBloodBank("https://data.gov.in/node/356981/datastore/export/json");
-                    hospitalJson = jsonParser.openHttpConnection("https://data.gov.in/node/323921/datastore/export/json");
+                    hospitalJson = jsonParser.openHttpConnection("https://data.gov.in/node/356921/datastore/export/json");
 //                        if (status == false) {
-                    addHospitaltoDb(hospitalJson);
                     addToBloodBankDB(bloodBankJson);
+                    addHospitaltoDb(hospitalJson);
 ////                        }
 //                    }
 //                    Looper.loop();
 //
                 }
-                }
+            }
 
 //            }
 
@@ -93,24 +93,38 @@ public class DownloadService extends Service {
                         strings.add(details);
                     }
                     Hospital hospital = new Hospital();
-                    hospital.setState(strings.get(0).toString());
-                    hospital.setCity(strings.get(1).toString());
-                    hospital.setPvt(strings.get(2).toString());
-                    hospital.setCategory(strings.get(3).toString());
+//                    hospital.setHospitalName(strings.get(0).toString());
+                    hospital.setHospitalName(strings.get(1).toString());
+                    hospital.setCategory(strings.get(2).toString());
+                    hospital.setCareType(strings.get(3).toString());
                     hospital.setSystemsOfMedicine(strings.get(4).toString());
-                    hospital.setContact(strings.get(5).toString());
-                    hospital.setPincode(strings.get(6).toString());
-                    hospital.setEmail(strings.get(7).toString());
-                    hospital.setWebsite(strings.get(8).toString());
-                    hospital.setSpecializations(strings.get(9).toString());
-                    hospital.setServices(strings.get(10).toString());
+                    hospital.setAddress(strings.get(5).toString());
+                    hospital.setState(strings.get(6).toString());
+                    hospital.setDistrict(strings.get(7).toString());
+                    hospital.setSubDistrict(strings.get(8).toString());
+                    hospital.setPincode(strings.get(9).toString());
+                    hospital.setTelephone(strings.get(10).toString());
+                    hospital.setMobileNo(strings.get(11).toString());
+                    hospital.setEmergencyNo(strings.get(12).toString());
+                    hospital.setAmbulanceNo(strings.get(13).toString());
+                    hospital.setTollfree(strings.get(14).toString());
+                    hospital.setHelpline(strings.get(15).toString());
+                    hospital.setFax(strings.get(16).toString());
+                    hospital.setPrimaryEmail(strings.get(17).toString());
+                    hospital.setSecondaryEmail(strings.get(18).toString());
+                    hospital.setWebsite(strings.get(19).toString());
+                    hospital.setSpecializations(strings.get(20).toString());
+                    hospital.setLat(strings.get(21).toString());
+                    hospital.setLog(strings.get(22).toString());
+                    hospital.setFalicilty(strings.get(23).toString());
+                    hospital.setNoOfBeds(strings.get(24).toString());
                     arrayList.add(hospital);
 
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            Log.e("Size ::::", "" + arrayList.size());
+            Log.e("Hospital ::::", "" + arrayList.size());
 //            hospitalDataBase.open();
             if (arrayList.size() > 0) {
 
@@ -136,21 +150,6 @@ public class DownloadService extends Service {
                         String details = array.getString(j);
                         strings.add(details);
                     }
-//                    Hospital modelClassDB = new Hospital();
-//                    modelClassDB.setHospitalId(array.getString("id"));
-//                    modelClassDB.setState(array.getString("State"));
-//                    modelClassDB.setCity(array.getString("City"));
-//                    modelClassDB.setPvt(array.getString("Hospital / Private"));
-//                    modelClassDB.setCategory(array.getString("Category"));
-//                    modelClassDB.setSpecializations(array.getString("Specializations"));
-//                    modelClassDB.setPincode(array.getString("AREA Pin CODE"));
-//                    modelClassDB.setContact(array.getString("Contact Details"));
-//                    modelClassDB.setSystemsOfMedicine(array.getString("Systems of Medicine"));
-//                    modelClassDB.setServices(array.getString("Services"));
-//                    modelClassDB.setWebsite(array.getString("Website link"));
-//                    modelClassDB.setTimestamp(array.getString("timestamp"));
-//                    modelClassDB.setEmail(array.getString("Email address"));
-//                    arrayList.add(modelClassDB);
                     BloodBank bloodBank = new BloodBank();
                     bloodBank.setState(strings.get(1).toString());
                     bloodBank.setCity(strings.get(2).toString());
@@ -167,14 +166,14 @@ public class DownloadService extends Service {
                     bloodBank.setBloodComponent(strings.get(13).toString());
                     bloodBank.setBloodGroup(strings.get(14).toString());
                     bloodBank.setServiceTime(strings.get(15).toString());
-                    bloodBank.setLatitude(strings.get(16).toString());
-                    bloodBank.setLangitude(strings.get(17).toString());
+                    bloodBank.setLatitude(null);
+                    bloodBank.setLangitude(null);
                     arrayList.add(bloodBank);
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            Log.e("Size ::::", "" + arrayList.size());
+            Log.e("bloodBank ::::", "" + arrayList.size());
 //            hospitalDataBase.open();
             if (arrayList.size() > 0) {
                 hospitalDataBase.open();

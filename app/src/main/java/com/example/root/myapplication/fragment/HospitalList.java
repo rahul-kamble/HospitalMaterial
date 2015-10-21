@@ -12,11 +12,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.example.root.myapplication.DB.HospitalDataBase;
-import com.example.root.myapplication.activity.MainActivity;
 import com.example.root.myapplication.ModelClass.Hospital;
 import com.example.root.myapplication.R;
+import com.example.root.myapplication.activity.MainActivity;
 import com.example.root.myapplication.adapter.HospNameAdap;
 
 import java.util.ArrayList;
@@ -42,18 +43,34 @@ public class HospitalList extends Fragment {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        MapFragment mapFragment = new MapFragment();
-        HospitalDataBase.bbOrhosp = false;
-        Bundle bundle = new Bundle();
-        bundle.putString("city", city);
-        bundle.putString("state", state);
-        mapFragment.setArguments(bundle);
-        FragmentManager fragmentManager = getFragmentManager();
-        FragmentTransaction transaction = fragmentManager.beginTransaction();
-        transaction.replace(R.id.view_main, mapFragment, HospitalDataBase.MAP_FRAGMENT).commit();
+        HospitalDataBase hospitalDataBase = new HospitalDataBase(getActivity());
+        if (hospitalDataBase.gps_enabled == false) {
+            hospitalDataBase.locationCheck();
+        }
+        if (hospitalDataBase.checkConnection() == true && hospitalDataBase.gps_enabled == true) {
+            MapFragment mapFragment = new MapFragment();
+            HospitalDataBase.bbOrhosp = false;
+            Bundle bundle = new Bundle();
+            bundle.putString("city", city);
+            bundle.putString("state", state);
+            mapFragment.setArguments(bundle);
+            FragmentManager fragmentManager = getFragmentManager();
+            FragmentTransaction transaction = fragmentManager.beginTransaction();
+            transaction.add(R.id.view_main, mapFragment).addToBackStack(null).commit();
+            getActivity().setTitle("Map");
+        } else {
+            Toast.makeText(getActivity(), "Check Internet connetion or GPS", Toast.LENGTH_SHORT).show();
+        }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getActivity().setTitle("Hospital");
     }
 
     @Override
@@ -73,12 +90,13 @@ public class HospitalList extends Fragment {
         mainactivity = (MainActivity) getActivity();
         addListListener();
         dbHelper = new HospitalDataBase(getActivity());
-            city = getArguments().getString("city");
-            state = getArguments().getString("state");
-            addDataTolist();
+        city = getArguments().getString("city");
+        state = getArguments().getString("state");
+        addDataTolist();
 
         return rootView;
     }
+
     private void addDataTolist() {
         hospNameList.clear();
         hospNameList.addAll(dbHelper.stateWiseHospitalForHospital(state, city));

@@ -4,14 +4,12 @@
     android:layout_height="fill_parent">
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:background="@color/background_floating_material_light"
         android:layout_height="match_parent"
         android:layout_marginBottom="10dp"
-        android:paddingTop="60dp"
-        android:paddingRight="20dp"
-        android:orientation="vertical">
+        android:background="@color/background_floating_material_light"
+        android:orientation="vertical"
+        android:paddingRight="20dp">
 
         <LinearLayout
             android:layout_width="fill_parent"
@@ -41,33 +39,6 @@
                 android:textStyle="bold"></TextView>
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="match_parent"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:paddingLeft="10dp"
-            android:paddingTop="10dp">
-
-            <TextView
-                android:id="@+id/City"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/Timestamp"
-                android:layout_weight="1.6"
-                android:text="City : "
-                android:textColor="@color/abc_primary_text_disable_only_material_light"
-                android:textSize="18dp"></TextView>
-
-            <TextView
-                android:id="@+id/Cityname"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/Timestamp"
-                android:layout_toRightOf="@+id/City"
-                android:layout_weight="2.4"></TextView>
-
-        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -80,7 +51,6 @@
                 android:id="@+id/State"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/City"
                 android:layout_weight="1.6"
                 android:text="State : "
                 android:textColor="@color/abc_primary_text_disable_only_material_light"
@@ -90,14 +60,70 @@
                 android:id="@+id/StateName"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/City"
                 android:layout_toRightOf="@+id/State"
                 android:layout_weight="2.4"></TextView>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingLeft="10dp"
+            android:paddingTop="10dp">
+
+            <TextView
+                android:id="@+id/district"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/Timestamp"
+                android:layout_weight="1.6"
+                android:text="City : "
+                android:textColor="@color/abc_primary_text_disable_only_material_light"
+                android:textSize="18dp"></TextView>
+
+            <TextView
+                android:id="@+id/districtName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/Timestamp"
+                android:layout_toRightOf="@+id/City"
+                android:layout_weight="2.4"></TextView>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingLeft="10dp"
+            android:paddingTop="10dp"
+            android:textColor="@color/abc_primary_text_disable_only_material_light"
+            android:textSize="18dp">
+
+            <TextView
+                android:id="@+id/category"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.6"
+                android:text="Category : "
+                android:textColor="@color/abc_primary_text_disable_only_material_light"
+                android:textSize="18dp"></TextView>
+
+            <TextView
+                android:id="@+id/categoryName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2.4"></TextView>
+
+
         </LinearLayout>
 
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
+            android:layout_marginBottom="10dp"
             android:layout_marginTop="10dp"
             android:background="@android:color/darker_gray" />
 
@@ -108,17 +134,19 @@
             android:paddingLeft="10dp">
 
             <TextView
-                android:id="@+id/Service"
+                android:id="@+id/facility"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1.6"
                 android:text="Service : "
+                android:layout_marginBottom="10dp"
                 android:textColor="@color/abc_primary_text_disable_only_material_light"
                 android:textSize="18dp"></TextView>
 
             <TextView
-                android:id="@+id/ServiceName"
+                android:id="@+id/facilityName"
                 android:layout_width="0dp"
+                android:layout_marginBottom="10dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="2.4"></TextView>
 
@@ -137,12 +165,14 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1.6"
                 android:text="Specialization : "
+                android:layout_marginBottom="10dp"
                 android:textColor="@color/abc_primary_text_disable_only_material_light"
                 android:textSize="18dp"></TextView>
 
             <TextView
                 android:id="@+id/specializationName"
                 android:layout_width="0dp"
+                android:layout_marginBottom="10dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="2.4" />
 
@@ -153,8 +183,8 @@
             android:layout_height="match_parent"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:paddingLeft="10dp"
-            android:paddingTop="10dp">
+            android:paddingBottom="10dp"
+            android:paddingLeft="10dp">
 
             <TextView
                 android:id="@+id/Medicine"
@@ -187,16 +217,16 @@
             android:paddingTop="10dp">
 
             <TextView
-                android:id="@+id/contact"
+                android:id="@+id/address"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1.6"
-                android:text="Contact : "
+                android:text="Address : "
                 android:textColor="@color/abc_primary_text_disable_only_material_light"
                 android:textSize="18dp"></TextView>
 
             <TextView
-                android:id="@+id/contactName"
+                android:id="@+id/addressName"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="2.4"></TextView>
@@ -212,21 +242,153 @@
             android:paddingTop="10dp">
 
             <TextView
-                android:id="@+id/Phone"
+                android:id="@+id/pincode"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1.6"
-                android:text="Phone No : "
+                android:text="Pincode : "
                 android:textColor="@color/abc_primary_text_disable_only_material_light"
                 android:textSize="18dp"></TextView>
 
             <TextView
-                android:id="@+id/Phone_No"
+                android:id="@+id/pincodeName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2.4"></TextView>
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingLeft="10dp"
+            android:paddingTop="10dp">
+
+            <TextView
+                android:id="@+id/telephone"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.6"
+                android:text="Telephone No : "
+                android:textColor="@color/abc_primary_text_disable_only_material_light"
+                android:textSize="18dp"></TextView>
+
+            <TextView
+                android:id="@+id/telephoneNo"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="2.4"></TextView>
 
         </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingLeft="10dp"
+            android:paddingTop="10dp">
+
+            <TextView
+                android:id="@+id/mobile"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.6"
+                android:text="Mobile No : "
+                android:textColor="@color/abc_primary_text_disable_only_material_light"
+                android:textSize="18dp"></TextView>
+
+            <TextView
+                android:id="@+id/mobileNo"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2.4"></TextView>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingLeft="10dp"
+            android:paddingTop="10dp">
+
+            <TextView
+                android:id="@+id/Ambulance"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.6"
+                android:text="Ambulance No : "
+                android:textColor="@color/abc_primary_text_disable_only_material_light"
+                android:textSize="18dp"></TextView>
+
+            <TextView
+                android:id="@+id/ambulanceNo"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2.4"></TextView>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingLeft="10dp"
+            android:paddingTop="10dp">
+
+            <TextView
+                android:id="@+id/tollFree"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.6"
+                android:text="Toll Free : "
+                android:textColor="@color/abc_primary_text_disable_only_material_light"
+                android:textSize="18dp"></TextView>
+
+            <TextView
+                android:id="@+id/tollFreeNo"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2.4"></TextView>
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="10dp"
+            android:background="@android:color/darker_gray" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingLeft="10dp"
+            android:paddingTop="10dp">
+
+            <TextView
+                android:id="@+id/fax"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.6"
+                android:text="Fax : "
+                android:textColor="@color/abc_primary_text_disable_only_material_light"
+                android:textSize="18dp"></TextView>
+
+            <TextView
+                android:id="@+id/faxName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2.4"></TextView>
+        </LinearLayout>
+
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -276,59 +438,6 @@
                 android:layout_weight="2.4"></TextView>
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:paddingLeft="10dp"
-            android:paddingTop="10dp">
-
-            <TextView
-                android:id="@+id/pincode"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1.6"
-                android:text="Pincode : "
-                android:textColor="@color/abc_primary_text_disable_only_material_light"
-                android:textSize="18dp"></TextView>
-
-            <TextView
-                android:id="@+id/pincodeName"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="2.4"></TextView>
-
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:paddingLeft="10dp"
-            android:paddingTop="10dp"
-            android:textColor="@color/abc_primary_text_disable_only_material_light"
-            android:textSize="18dp">
-
-            <TextView
-                android:id="@+id/category"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1.6"
-                android:text="Category : "
-                android:textColor="@color/abc_primary_text_disable_only_material_light"
-                android:textSize="18dp"></TextView>
-
-            <TextView
-                android:id="@+id/categoryName"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="2.4"></TextView>
-
-
-        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"

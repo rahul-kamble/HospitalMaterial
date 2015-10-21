@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.root.myapplication.DB.HospitalDataBase;
 import com.example.root.myapplication.ModelClass.BloodBank;
@@ -23,7 +24,7 @@ import java.util.ArrayList;
 
 public class GotoUserHospDetails extends Fragment {
     HospitalDataBase dbHelper;
-    TextView specialization, service , systemsOfMedicine;
+    TextView specialization, service, systemsOfMedicine;
     TextView phoneNo;
     Bundle bundle = new Bundle();
     int position;
@@ -34,18 +35,22 @@ public class GotoUserHospDetails extends Fragment {
     View rootViewForHospital, rootViewForBloodBank;
     ArrayList<Hospital> arrayList = new ArrayList<>();
     ArrayList<BloodBank> arrayListForBloodBank = new ArrayList<>();
-    TextView pincode, email, website, contact, hospitalName, district, serviceTime, lattitude, city;
-    TextView state, category, helpline, address, bloodComponent, bloodGroup, langitude, fax;
+    TextView pincode, email, website, contact, hospitalName, district, serviceTime, city;
+    TextView state, category, helpline, address, bloodComponent, bloodGroup;
+    private TextView facility, txtAdress, ambulanceNo, tollfree, fax, mobileNo;
+    private TextView telephone;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         position = getArguments().getInt("position");
         userCity = getArguments().getString("city");
         userState = getArguments().getString("state");
+        addressForMap = userCity + ", " + userCity;
         dbHelper = new HospitalDataBase(getActivity());
         HospitalDataBase hospitalDataBase = new HospitalDataBase(getActivity());
 
-        if (hospitalDataBase.stateWiseHospitalForHospital(userState, userCity).size() > 0 && HospitalDataBase.bbOrhosp==false) {
+        if (hospitalDataBase.stateWiseHospitalForHospital(userState, userCity).size() > 0 && HospitalDataBase.bbOrhosp == false) {
             rootViewForHospital = inflater.inflate(R.layout.fragment_hospital_details, container, false);
             arrayList.addAll(dbHelper.stateWiseHospitalForHospital(userState, userCity));
             hospital = dbHelper.getSinglerecordForHosp(arrayList.get(position).getRowId());
@@ -55,7 +60,7 @@ public class GotoUserHospDetails extends Fragment {
             addDialer();
             return rootViewForHospital;
         }
-        if (hospitalDataBase.stateWiseHospitalForBloodBank(userState, userCity).size() > 0 && HospitalDataBase.bbOrhosp==true) {
+        if (hospitalDataBase.stateWiseHospitalForBloodBank(userState, userCity).size() > 0 && HospitalDataBase.bbOrhosp == true) {
             rootViewForBloodBank = inflater.inflate(R.layout.fragment_blood_bank_details, container, false);
             arrayListForBloodBank.addAll(dbHelper.stateWiseHospitalForBloodBank(userState, userCity));
             bloodBank = dbHelper.getSinglerecord(arrayListForBloodBank.get(position).getRowid());
@@ -65,7 +70,7 @@ public class GotoUserHospDetails extends Fragment {
             addDialerForBB();
             return rootViewForBloodBank;
         }
-        return  rootViewForBloodBank;
+        return rootViewForBloodBank;
     }
 
     private void addDialerForBB() {
@@ -129,13 +134,20 @@ public class GotoUserHospDetails extends Fragment {
     }
 
 
-
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Uri s = Uri.parse("geo:0,0?q=" + hospital.getPvt() + ", " + addressForMap);
-        if (addressForMap != null) {
-            showMap(s);
+        HospitalDataBase hospitalDataBase = new HospitalDataBase(getActivity());
+        if (hospitalDataBase.gps_enabled == false) {
+            hospitalDataBase.locationCheck();
+        }
+        if (hospitalDataBase.checkConnection() == true && hospitalDataBase.gps_enabled == true) {
+
+            Uri s = Uri.parse("geo:0,0?q=" + hospital.getHospitalName() + ", " + addressForMap);
+            if (addressForMap != null) {
+                showMap(s);
+            }
+        } else {
+            Toast.makeText(getActivity(), "Check Internet connetion or GPS", Toast.LENGTH_SHORT).show();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -145,14 +157,18 @@ public class GotoUserHospDetails extends Fragment {
         website = (TextView) rootView.findViewById(R.id.websiteName);
         hospitalName = (TextView) rootView.findViewById(R.id.HospitalName);
         state = (TextView) rootView.findViewById(R.id.StateName);
-        city = (TextView) rootView.findViewById(R.id.Cityname);
+        district = (TextView) rootView.findViewById(R.id.districtName);
         specialization = (TextView) rootView.findViewById(R.id.specializationName);
-        service = (TextView) rootView.findViewById(R.id.ServiceName);
+        facility = (TextView) rootView.findViewById(R.id.facilityName);
         systemsOfMedicine = (TextView) rootView.findViewById(R.id.MedicineName);
         category = (TextView) rootView.findViewById(R.id.categoryName);
         pincode = (TextView) rootView.findViewById(R.id.pincodeName);
-        contact = (TextView) rootView.findViewById(R.id.contactName);
-        phoneNo = (TextView) rootView.findViewById(R.id.Phone_No);
+        txtAdress = (TextView) rootView.findViewById(R.id.addressName);
+        telephone = (TextView) rootView.findViewById(R.id.telephoneNo);
+        mobileNo = (TextView) rootView.findViewById(R.id.mobileNo);
+        ambulanceNo = (TextView) rootView.findViewById(R.id.ambulanceNo);
+        fax = (TextView) rootView.findViewById(R.id.faxName);
+        tollfree = (TextView) rootView.findViewById(R.id.tollFreeNo);
         setAllTextForHospital();
     }
 
@@ -176,17 +192,18 @@ public class GotoUserHospDetails extends Fragment {
     }
 
     private void addDialer() {
-        phoneNo.setOnClickListener(new View.OnClickListener() {
+        telephone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent callIntent = new Intent(Intent.ACTION_CALL);
-                callIntent.setData(Uri.parse("tel:" + contact.getText().toString()));
+                callIntent.setData(Uri.parse("tel:" + telephone.getText().toString()));
                 startActivity(callIntent);
             }
         });
 
 
     }
+
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
@@ -196,43 +213,51 @@ public class GotoUserHospDetails extends Fragment {
 
 
     private void setAllTextForHospital() {
-        email.setText(hospital.getEmail());
+        email.setText(hospital.getPrimaryEmail());
         email.setTextSize(15);
+        telephone.setText(hospital.getTelephone());
         website.setText(hospital.getWebsite());
+        mobileNo.setText(hospital.getMobileNo());
+        tollfree.setText(hospital.getTollfree());
+        ambulanceNo.setText(hospital.getAmbulanceNo());
         if (!hospital.getWebsite().equals("NA")) {
             website.setTextColor(Color.BLUE);
         }
-        if (!hospital.getEmail().equals("NA")) {
+        if (!hospital.getPrimaryEmail().equals("NA")) {
             email.setTextColor(Color.BLUE);
         }
-        hospitalName.setText(hospital.getPvt());
+        if (!hospital.getTelephone().equals("NA")) {
+            telephone.setTextColor(Color.BLUE);
+        }
+        if (!hospital.getMobileNo().equals("NA")) {
+            mobileNo.setTextColor(Color.BLUE);
+        }
+        if (!hospital.getAmbulanceNo().equals("NA")) {
+            ambulanceNo.setTextColor(Color.BLUE);
+        }
+        if (!hospital.getTollfree().equals("NA")) {
+            tollfree.setTextColor(Color.BLUE);
+        }
+        hospitalName.setText(hospital.getHospitalName());
         state.setText(hospital.getState());
-        city.setText(hospital.getCity());
+        district.setText(hospital.getDistrict());
         specialization.setText(hospital.getSpecializations());
         systemsOfMedicine.setText(hospital.getSystemsOfMedicine());
-        service.setText(hospital.getServices());
+        facility.setText(hospital.getFalicilty());
         category.setText(hospital.getCategory());
         pincode.setText(hospital.getPincode());
-        contact.setText(hospital.getContact());
-        String contact = hospital.getContact();
-        if (contact.contains("Phone:")) {
-            String[] splits = contact.split("Phone:");
-            addressForMap = splits[0];
-            String no1 = splits[1].trim();
-            phoneNo.setText(no1);
-            phoneNo.setTextColor(Color.BLUE);
-        } else if (contact.contains("Phone-")) {
-            String[] splits = contact.split("Phone-");
-            addressForMap = splits[0];
-            String no[] = splits[1].split(",");
-            cno = no[0].trim();
-            phoneNo.setText(cno);
-            phoneNo.setTextColor(Color.BLUE);
-        }
+        fax.setText(hospital.getFax());
+        txtAdress.setText(hospital.getAddress());
+
     }
+
     private void setAllTextForBloodBank() {
         hospitalName.setText(bloodBank.getHospitalName());
 //        timestamp.setText(hospital.getTimestamp());
+        contact.setText(bloodBank.getContact());
+        if (!bloodBank.getContact().equals("NA")) {
+            contact.setTextColor(Color.BLUE);
+        }
         state.setText(bloodBank.getState());
         city.setText(bloodBank.getCity());
         email.setText(bloodBank.getEmail());
@@ -244,7 +269,6 @@ public class GotoUserHospDetails extends Fragment {
         pincode.setText(bloodBank.getPincode());
         fax.setText(bloodBank.getFax());
         helpline.setText(bloodBank.getHelpline());
-        contact.setText(bloodBank.getContact());
         category.setText(bloodBank.getCategory());
         district.setText(bloodBank.getDistrict());
         serviceTime.setText(bloodBank.getServiceTime());

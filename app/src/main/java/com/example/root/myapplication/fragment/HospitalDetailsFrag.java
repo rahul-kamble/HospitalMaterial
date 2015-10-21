@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.root.myapplication.DB.HospitalDataBase;
 import com.example.root.myapplication.ModelClass.Hospital;
@@ -22,15 +23,15 @@ import com.example.root.myapplication.R;
 import java.util.ArrayList;
 
 public class HospitalDetailsFrag extends Fragment {
-    HospitalDataBase dbHelper;
-    TextView pincode, email, website, contact, hospitalName, specialization, service, timestamp, systemsOfMedicine, city;
-    TextView state, category, phoneNo;
     protected LocationListener locationListener;
+    HospitalDataBase dbHelper;
+    TextView pincode, email, website, txtAdress, hospitalName, specialization, facility, systemsOfMedicine, district;
+    TextView state, category, phoneNo, mobileNo, ambulanceNo, tollfree, telephone, fax;
     Bundle bundle = new Bundle();
     int position;
     String cno;
     String address;
-    Double lat,longitude;
+    Double lat, longitude;
     Hospital hospital;
     ArrayList<Hospital> arrayList = new ArrayList<>();
 
@@ -42,7 +43,8 @@ public class HospitalDetailsFrag extends Fragment {
         dbHelper = new HospitalDataBase(getActivity());
         String city = getArguments().getString("city");
         String state = getArguments().getString("state");
-        arrayList.addAll(dbHelper.stateWiseHospitalForHospital(state,city));
+        address = city + ", " + state;
+        arrayList.addAll(dbHelper.stateWiseHospitalForHospital(state, city));
         hospital = dbHelper.getSinglerecordForHosp(arrayList.get(position).getRowId());
         findId(rootView);
         emailTextViewAction();
@@ -108,57 +110,22 @@ public class HospitalDetailsFrag extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Uri s = Uri.parse("geo:0,0?q=" + hospital.getPvt() + ", " + address);
-        if (address != null) {
-            showMap(s);
+        HospitalDataBase hospitalDataBase = new HospitalDataBase(getActivity());
+        if (hospitalDataBase.gps_enabled == false) {
+            hospitalDataBase.locationCheck();
+        }
+        if (hospitalDataBase.checkConnection()==true && hospitalDataBase.gps_enabled == true) {
+            Uri s = Uri.parse("geo:0,0?q=" + hospital.getHospitalName() + ", " + address);
+            if (address != null) {
+                showMap(s);
+            }
+        }
+        else
+        {
+            Toast.makeText(getActivity(), "Check Internet connetion or GPS", Toast.LENGTH_SHORT).show();
         }
         return super.onOptionsItemSelected(item);
 //        Geocoder geocoder = new Geocoder(getActivity(), Locale.getDefault());
-//        List<Address> addresses = null;
-//        try {
-//            addresses = geocoder.getFromLocation(18.5203, 73.856, 1);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        String cityName = addresses.get(0).getAddressLine(0);
-//        String stateName = addresses.get(0).getAddressLine(1);
-//        String countryName = addresses.get(0).getAddressLine(2);
-//        return true;
-//        LocationManager locMan = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-//        locMan.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, new LocationListener() {
-//            @Override
-//            public void onLocationChanged(Location location) {
-//                longitude=location.getLongitude();
-//                lat=location.getLatitude();
-//                Log.e("lat",""+longitude);
-//                Log.e("lat",""+lat);
-//            }
-
-//        LocationManager locationManager = (LocationManager)getActivity().getSystemService(Context.LOCATION_SERVICE);
-//
-//        Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-       // if (location != null) {
-
-//            lat = location.getLatitude();
-//            longitude = location.getLongitude();
-//            Log.d("old", "lat :  " + lat);
-//            Log.d("old", "long :  " + longitude);
-
-        //}
-//        Geocoder gcd = new Geocoder(getActivity(), Locale.getDefault());
-//        List<Address> addresses = null;
-//        try {
-//           // addresses = gcd.getFromLocation(lat, longitude, 1);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        if (addresses.size() > 0) {
-//            Log.e("hi", "" + addresses.get(0).getLocality());//city
-//            Log.e("hi", "" + addresses.get(0).getAddressLine(1));//local area
-//            Log.e("hi", "" + addresses.get(0).getAdminArea());//state
-//        }
-
-//        return true;
     }
 
     private void findId(View rootView) {
@@ -166,23 +133,27 @@ public class HospitalDetailsFrag extends Fragment {
         website = (TextView) rootView.findViewById(R.id.websiteName);
         hospitalName = (TextView) rootView.findViewById(R.id.HospitalName);
         state = (TextView) rootView.findViewById(R.id.StateName);
-        city = (TextView) rootView.findViewById(R.id.Cityname);
+        district = (TextView) rootView.findViewById(R.id.districtName);
         specialization = (TextView) rootView.findViewById(R.id.specializationName);
-        service = (TextView) rootView.findViewById(R.id.ServiceName);
+        facility = (TextView) rootView.findViewById(R.id.facilityName);
         systemsOfMedicine = (TextView) rootView.findViewById(R.id.MedicineName);
         category = (TextView) rootView.findViewById(R.id.categoryName);
         pincode = (TextView) rootView.findViewById(R.id.pincodeName);
-        contact = (TextView) rootView.findViewById(R.id.contactName);
-        phoneNo = (TextView) rootView.findViewById(R.id.Phone_No);
-        setAllText();
+        txtAdress = (TextView) rootView.findViewById(R.id.addressName);
+        telephone = (TextView) rootView.findViewById(R.id.telephoneNo);
+        mobileNo = (TextView) rootView.findViewById(R.id.mobileNo);
+        ambulanceNo = (TextView) rootView.findViewById(R.id.ambulanceNo);
+        fax = (TextView) rootView.findViewById(R.id.faxName);
+        tollfree = (TextView) rootView.findViewById(R.id.tollFreeNo);
+        setAllTextForHospital();
     }
 
     private void addDialer() {
-        phoneNo.setOnClickListener(new View.OnClickListener() {
+        telephone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent callIntent = new Intent(Intent.ACTION_CALL);
-                callIntent.setData(Uri.parse("tel:" + cno));
+                callIntent.setData(Uri.parse("tel:"  + telephone.getText().toString()));
                 startActivity(callIntent);
             }
         });
@@ -190,41 +161,43 @@ public class HospitalDetailsFrag extends Fragment {
 
     }
 
-    private void setAllText() {
-        email.setText(hospital.getEmail());
+    private void setAllTextForHospital() {
+        email.setText(hospital.getPrimaryEmail());
         email.setTextSize(15);
+        telephone.setText(hospital.getTelephone());
         website.setText(hospital.getWebsite());
+        mobileNo.setText(hospital.getMobileNo());
+        tollfree.setText(hospital.getTollfree());
+        ambulanceNo.setText(hospital.getAmbulanceNo());
         if (!hospital.getWebsite().equals("NA")) {
             website.setTextColor(Color.BLUE);
         }
-        if (!hospital.getEmail().equals("NA")) {
+        if (!hospital.getPrimaryEmail().equals("NA")) {
             email.setTextColor(Color.BLUE);
         }
-        hospitalName.setText(hospital.getPvt());
-//        timestamp.setText(hospital.getTimestamp());
+        if (!hospital.getTelephone().equals("NA")) {
+            telephone.setTextColor(Color.BLUE);
+        }
+        if (!hospital.getMobileNo().equals("NA")) {
+            mobileNo.setTextColor(Color.BLUE);
+        }
+        if (!hospital.getAmbulanceNo().equals("NA")) {
+            ambulanceNo.setTextColor(Color.BLUE);
+        }
+        if (!hospital.getTollfree().equals("NA")) {
+            tollfree.setTextColor(Color.BLUE);
+        }
+        hospitalName.setText(hospital.getHospitalName());
         state.setText(hospital.getState());
-        city.setText(hospital.getCity());
+        district.setText(hospital.getDistrict());
         specialization.setText(hospital.getSpecializations());
         systemsOfMedicine.setText(hospital.getSystemsOfMedicine());
-        service.setText(hospital.getServices());
+        facility.setText(hospital.getFalicilty());
         category.setText(hospital.getCategory());
         pincode.setText(hospital.getPincode());
-        contact.setText(hospital.getContact());
-        String contact = hospital.getContact();
-        if (contact.contains("Phone:")) {
-            String[] splits = contact.split("Phone:");
-            address = splits[0];
-            String no1 = splits[1].trim();
-            phoneNo.setText(no1);
-            phoneNo.setTextColor(Color.BLUE);
-        } else if (contact.contains("Phone-")) {
-            String[] splits = contact.split("Phone-");
-            address = splits[0];
-            String no[] = splits[1].split(",");
-            cno = no[0].trim();
-            phoneNo.setText(cno);
-            phoneNo.setTextColor(Color.BLUE);
-        }
+        fax.setText(hospital.getFax());
+        txtAdress.setText(hospital.getAddress());
+
     }
 
 

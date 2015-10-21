@@ -42,7 +42,7 @@ public class BloodBankDetails extends Fragment {
         findId(rootView);
 //        emailTextViewAction();
 //        websiteTextViewAction();
-//        addDialer();
+        addDialer();
         return rootView;
     }
 
@@ -67,10 +67,18 @@ public class BloodBankDetails extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        HospitalDataBase hospitalDataBase = new HospitalDataBase(getActivity());
+        if (hospitalDataBase.gps_enabled == false) {
+            hospitalDataBase.locationCheck();
+        }
+        if (hospitalDataBase.checkConnection() == true && hospitalDataBase.gps_enabled == true) {
         Uri s = Uri.parse("geo:0,0?q=" + bloodBank.getHospitalName() + ", " + addressMap);
         Log.e("uri", "" + s);
         if (addressMap != null) {
             showMap(s);
+            }
+        } else {
+            Toast.makeText(getActivity(), "Check Internet connetion or GPS", Toast.LENGTH_SHORT).show();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -81,6 +89,10 @@ public class BloodBankDetails extends Fragment {
         state.setText(bloodBank.getState());
         city.setText(bloodBank.getCity());
         email.setText(bloodBank.getEmail());
+        contact.setText(bloodBank.getContact());
+        if (!bloodBank.getContact().equals("NA")) {
+            contact.setTextColor(Color.BLUE);
+        }
         email.setTextSize(15);
         website.setText(bloodBank.getWebsite());
         bloodComponent.setText(bloodBank.getBloodComponent());
@@ -90,11 +102,11 @@ public class BloodBankDetails extends Fragment {
         pincode.setText(bloodBank.getPincode());
         fax.setText(bloodBank.getFax());
         helpline.setText(bloodBank.getHelpline());
-        contact.setText(bloodBank.getContact());
         category.setText(bloodBank.getCategory());
         district.setText(bloodBank.getDistrict());
         serviceTime.setText(bloodBank.getServiceTime());
     }
+
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
@@ -115,6 +127,19 @@ public class BloodBankDetails extends Fragment {
         if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
             startActivity(intent);
         }
+    }
+
+    private void addDialer() {
+        contact.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent callIntent = new Intent(Intent.ACTION_CALL);
+                callIntent.setData(Uri.parse("tel:" + contact.getText().toString()));
+                startActivity(callIntent);
+            }
+        });
+
+
     }
 }
 
